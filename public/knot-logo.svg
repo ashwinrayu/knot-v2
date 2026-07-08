@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" fill="none">
+
+  <!-- ── ICON MARK (top center) ── -->
+  <g transform="translate(200, 130)">
+
+    <!-- 4 outer endpoint circles -->
+    <circle cx="0"   cy="-95" r="11" stroke="currentColor" stroke-width="7" fill="white"/>
+    <circle cx="95"  cy="0"   r="11" stroke="currentColor" stroke-width="7" fill="white"/>
+    <circle cx="0"   cy="95"  r="11" stroke="currentColor" stroke-width="7" fill="white"/>
+    <circle cx="-95" cy="0"   r="11" stroke="currentColor" stroke-width="7" fill="white"/>
+
+    <!-- Outer diamond track -->
+    <path d="M0,-84 L84,0 L0,84 L-84,0 Z"
+          stroke="currentColor" stroke-width="7" fill="none"
+          stroke-linejoin="round"/>
+
+    <!-- Inner diamond track (inset ~18px) -->
+    <path d="M0,-58 L58,0 L0,58 L-58,0 Z"
+          stroke="currentColor" stroke-width="7" fill="none"
+          stroke-linejoin="round"/>
+
+    <!-- Arrow head on the top-right segment of outer track (pointing from top toward right) -->
+    <!-- Arrow shaft runs along top-right edge, arrowhead near top -->
+    <polyline points="36,-68 55,-55 42,-36"
+              stroke="currentColor" stroke-width="7" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Center rounded square -->
+    <rect x="-33" y="-33" width="66" height="66" rx="10" ry="10"
+          stroke="currentColor" stroke-width="6.5" fill="white"/>
+
+    <!-- Open book inside center square -->
+    <!-- Left page -->
+    <path d="M-16,-14 C-16,-14 -3,-18 0,-10 L0,14 C0,14 -13,10 -16,14 Z"
+          fill="currentColor"/>
+    <!-- Right page -->
+    <path d="M16,-14 C16,-14 3,-18 0,-10 L0,14 C0,14 13,10 16,14 Z"
+          fill="currentColor"/>
+    <!-- Center spine line -->
+    <line x1="0" y1="-14" x2="0" y2="14"
+          stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+
+  </g>
+
+  <!-- ── KNOT WORDMARK ── -->
+  <text
+    x="200" y="255"
+    text-anchor="middle"
+    font-family="'Arial Black', 'Helvetica Neue', sans-serif"
+    font-weight="900"
+    font-size="52"
+    letter-spacing="14"
+    fill="currentColor"
+  >KNOT</text>
+
+  <!-- ── Tagline ── -->
+  <text
+    x="200" y="283"
+    text-anchor="middle"
+    font-family="'Arial', 'Helvetica Neue', sans-serif"
+    font-weight="500"
+    font-size="10"
+    letter-spacing="4"
+    fill="currentColor"
+    opacity="0.65"
+  >KNOWLEDGE  |  NAVIGATION  |  OPTIMIZATION  |  TOOL</text>
+
+</svg>
