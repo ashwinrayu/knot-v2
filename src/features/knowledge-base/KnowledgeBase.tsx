@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 export const KnowledgeBase: React.FC = () => {
-  const { receivingCourses, evaluations, triggerSystemNotification, updateCatalogCourse } = useAppState();
+  const { receivingCourses, evaluations, triggerSystemNotification, updateCatalogCourse, institution } = useAppState();
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'graph' | 'injection' | 'registry' | 'versions' | 'validation'>('dashboard');
 
@@ -216,13 +216,13 @@ export const KnowledgeBase: React.FC = () => {
                 <span className="text-[8px] text-slate-400 block mt-1 font-bold uppercase">Linked Faculty Branches</span>
               </Card>
               <Card className="p-5 flex flex-col justify-between hover:border-slate-300 transition-colors bg-white">
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Last Sync Completed</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Sync Schedule ({institution.syncTiming || 'Weekly'})</span>
                 <div className="flex items-baseline gap-2 mt-3">
                   <span className="text-xl font-display font-black text-indigo-650 tracking-tight">Today 2:15 PM</span>
                 </div>
                 <span className="text-[8px] text-emerald-600 block mt-1.5 font-bold uppercase flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                  Registry Intact
+                  Registry Sync ({institution.syncTiming || 'Weekly'})
                 </span>
               </Card>
             </div>

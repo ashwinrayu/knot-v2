@@ -12,6 +12,7 @@ export const SettingsPanel: React.FC = () => {
   const [email, setEmail] = useState(institution.email);
   const [website, setWebsite] = useState(institution.website);
   const [address, setAddress] = useState(institution.address);
+  const [syncTiming, setSyncTiming] = useState(institution.syncTiming || 'Weekly');
 
   // AI settings
   const [minGrade, setMinGrade] = useState(institution.aiConfig.minGrade);
@@ -34,7 +35,8 @@ export const SettingsPanel: React.FC = () => {
       name,
       email,
       website,
-      address
+      address,
+      syncTiming
     });
     triggerSystemNotification('Identity profile saved successfully.', 'success');
   };
@@ -155,6 +157,18 @@ export const SettingsPanel: React.FC = () => {
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full px-4 py-2 rounded-xl border border-slate-200 bg-white font-semibold text-slate-700 focus:outline-none"
               />
+            </div>
+            <div>
+              <label className="block mb-2 uppercase">Knowledge Base Sync Timing</label>
+              <select
+                value={syncTiming}
+                onChange={(e) => setSyncTiming(e.target.value)}
+                className="w-full px-4 py-2 rounded-xl border border-slate-200 bg-white font-semibold text-slate-750 focus:outline-none"
+              >
+                <option value="Daily">Daily (Every night at 12:00 AM)</option>
+                <option value="Weekly">Weekly (Every Sunday morning)</option>
+                <option value="Monthly">Monthly (1st of each month)</option>
+              </select>
             </div>
             <Button type="submit" className="w-full">Save Profile</Button>
           </form>

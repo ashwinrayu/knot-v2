@@ -12,6 +12,31 @@ import {
   Trash2, FileCode, CheckCircle2, History, ChevronRight 
 } from 'lucide-react';
 
+const RECOMMENDED_TARGET_COURSES: Record<string, Array<{ code: string; title: string; credits: number }>> = {
+  'B.S. in Computer Science': [
+    { code: 'CS 101', title: 'Introduction to Computer Science', credits: 4 },
+    { code: 'CS 102', title: 'Data Structures & Algorithms', credits: 4 },
+    { code: 'MATH 101', title: 'Calculus I', credits: 4 },
+    { code: 'ENG 101', title: 'Academic Writing & Rhetoric', credits: 3 }
+  ],
+  'B.S. in Business Administration': [
+    { code: 'BUS 101', title: 'Introduction to Business', credits: 3 },
+    { code: 'BUS 310', title: 'Global Supply Chain Management', credits: 3 },
+    { code: 'MATH 101', title: 'Calculus I', credits: 4 },
+    { code: 'PSYCH 101', title: 'General Psychology', credits: 3 }
+  ],
+  'B.S. in Mechanical Engineering': [
+    { code: 'MATH 101', title: 'Calculus I', credits: 4 },
+    { code: 'PHYS 101', title: 'General Physics I', credits: 4 },
+    { code: 'CS 101', title: 'Introduction to Computer Science', credits: 4 }
+  ],
+  'B.A. in Psychology': [
+    { code: 'PSYCH 101', title: 'General Psychology', credits: 3 },
+    { code: 'ENG 101', title: 'Academic Writing & Rhetoric', credits: 3 },
+    { code: 'MATH 101', title: 'Calculus I', credits: 4 }
+  ]
+};
+
 export const StudentUpload: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +56,21 @@ export const StudentUpload: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [completedResult, setCompletedResult] = useState<any>(null);
+
+  // V2 target course suggestions & selection states
+  const [selectedTargetCourses, setSelectedTargetCourses] = useState<string[]>([]);
+
+  // Automatically preselect all recommended courses when target program changes
+  React.useEffect(() => {
+    const defaults = RECOMMENDED_TARGET_COURSES[studentProgram]?.map(c => c.code) || [];
+    setSelectedTargetCourses(defaults);
+  }, [studentProgram]);
+
+  const handleTargetCourseToggle = (code: string) => {
+    setSelectedTargetCourses(prev =>
+      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
+    );
+  };
 
   // 10-Stage Stepper
   const stepsList = [
@@ -166,6 +206,46 @@ export const StudentUpload: React.FC = () => {
                   <option>B.S. in Mechanical Engineering</option>
                   <option>B.A. in Psychology</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Target Course Suggestions & Selection */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center select-none">
+                <label className="uppercase">Target Courses to Satisfy</label>
+                <span className="text-[10px] text-indigo-650 bg-indigo-50 border border-indigo-150 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  College Recommended
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 font-semibold leading-normal">
+                Based on your target program, the college suggests evaluating equivalents for these courses. Select which ones you want to satisfy:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {RECOMMENDED_TARGET_COURSES[studentProgram]?.map(course => {
+                  const isChecked = selectedTargetCourses.includes(course.code);
+                  return (
+                    <label 
+                      key={course.code}
+                      className={`p-3.5 border rounded-xl flex items-start gap-3 cursor-pointer select-none transition-all ${
+                        isChecked 
+                          ? 'border-indigo-500 bg-indigo-50/20 shadow-xs' 
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handleTargetCourseToggle(course.code)}
+                        className="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
+                      <div>
+                        <span className="block font-bold text-slate-800 text-[11px]">{course.code}</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold mt-0.5">{course.title} ({course.credits} Credits)</span>
+                      </div>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 
@@ -333,6 +413,66 @@ export const StudentUpload: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Target Course Suggestions & Selection Results */}
+          <div className="space-y-4 pt-4 border-t border-slate-100 select-none">
+            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+              <Sparkles className="h-4.5 w-4.5 text-indigo-500 animate-pulse" />
+              Transfer Suggestions & Next Steps
+            </h3>
+            <p className="text-[10px] text-slate-450 font-semibold leading-normal">
+              Based on your selected target courses and evaluation status, here are your personalized recommendations:
+            </p>
+            
+            <div className="space-y-2.5 font-semibold">
+              {RECOMMENDED_TARGET_COURSES[studentProgram]?.map(course => {
+                const isSelected = selectedTargetCourses.includes(course.code);
+                // Find if this target course was matched in the results
+                const matchedExtracted = completedResult.courses?.find((c: any) => c.matchedCourseCode === course.code);
+                
+                let recommendationTitle = '';
+                let recommendationDesc = '';
+                let statusColor = '';
+                let statusText = '';
+                
+                if (!isSelected) {
+                  statusText = 'Not Selected';
+                  statusColor = 'bg-slate-50 text-slate-450 border-slate-200';
+                  recommendationTitle = `Include ${course.code} for evaluation`;
+                  recommendationDesc = `You have not selected ${course.code} to satisfy. If you have taken an equivalent, re-run with it checked to earn ${course.credits} units.`;
+                } else if (matchedExtracted && matchedExtracted.status === 'approved') {
+                  statusText = 'Satisfied';
+                  statusColor = 'bg-emerald-50 text-emerald-700 border-emerald-150';
+                  recommendationTitle = `Perfect Match for ${course.code}`;
+                  recommendationDesc = `Your course ${matchedExtracted.code} (${matchedExtracted.title}) is a 96% match. Credits are fully transferable!`;
+                } else if (matchedExtracted && matchedExtracted.status === 'pending') {
+                  statusText = 'Pending Audit';
+                  statusColor = 'bg-amber-50 text-amber-750 border-amber-150';
+                  recommendationTitle = `Manual review for ${course.code}`;
+                  recommendationDesc = `Your course ${matchedExtracted.code} has 88% similarity but requires admissions audit. An advisor will contact you.`;
+                } else {
+                  statusText = 'Missing / Rejected';
+                  statusColor = 'bg-rose-50 text-rose-700 border-rose-150';
+                  recommendationTitle = `Complete substitute at Knot for ${course.code}`;
+                  recommendationDesc = `No valid passing equivalent found. We recommend enrolling in ${course.code} (${course.title}) next semester.`;
+                }
+
+                return (
+                  <div key={course.code} className="p-3.5 border border-slate-150 rounded-xl bg-slate-50/30 flex justify-between gap-4 items-start">
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                        {recommendationTitle}
+                      </span>
+                      <p className="text-[10px] text-slate-500 font-semibold leading-normal">{recommendationDesc}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wider ${statusColor}`}>
+                      {statusText}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

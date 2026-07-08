@@ -53,6 +53,68 @@ export const AdminLayout: React.FC = () => {
     { label: 'Settings', path: '/admin/settings', icon: <Settings className="h-4 w-4" /> },
   ];
 
+  const menuGroups = [
+    {
+      label: 'Dashboard',
+      icon: <LayoutDashboard className="h-4 w-4" />,
+      path: '/admin/dashboard',
+      subItems: [
+        { label: 'Overview', path: '/admin/dashboard' },
+        { label: 'Analytics', path: '/admin/analytics' }
+      ]
+    },
+    {
+      label: 'Evaluations',
+      icon: <FileText className="h-4 w-4" />,
+      path: '/admin/evaluations',
+      subItems: [
+        { label: 'Processed Queue', path: '/admin/evaluations' },
+        { label: 'Review Center', path: '/admin/review' },
+        { label: 'Student Reports', path: '/admin/reports' }
+      ]
+    },
+    {
+      label: 'Knowledge Base',
+      icon: <Database className="h-4 w-4" />,
+      path: '/admin/knowledge-base',
+      subItems: [
+        { label: 'AI Mapping Registry', path: '/admin/knowledge-base' },
+        { label: 'Course Catalog', path: '/admin/catalog' },
+        { label: 'Website Scraper', path: '/admin/scraper' }
+      ]
+    },
+    {
+      label: 'Student Leads',
+      icon: <FolderKanban className="h-4 w-4" />,
+      path: '/admin/leads',
+      subItems: []
+    },
+    {
+      label: 'Settings',
+      icon: <Settings className="h-4 w-4" />,
+      path: '/admin/settings',
+      subItems: [
+        { label: 'System Configuration', path: '/admin/settings' },
+        { label: 'Users & Audit Logs', path: '/admin/users' }
+      ]
+    }
+  ];
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    'Dashboard': true,
+    'Evaluations': true,
+    'Knowledge Base': true,
+    'Student Leads': true,
+    'Settings': true
+  });
+
+  const toggleGroup = (groupLabel: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupLabel]: !prev[groupLabel]
+    }));
+  };
+
   // Get active navigation label for breadcrumbs
   const currentNav = navItems.find(item => pathname.startsWith(item.path));
   const activeLabel = currentNav ? currentNav.label : 'Admin Portal';
@@ -111,22 +173,68 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Sidebar Menu Links */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto font-semibold text-[11px] uppercase tracking-wider select-none text-slate-400">
-            {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.path);
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto font-semibold text-[11px] uppercase tracking-wider select-none text-slate-400">
+            {menuGroups.map((group) => {
+              const isGroupActive = group.subItems.length > 0 
+                ? group.subItems.some(sub => pathname === sub.path || pathname.startsWith(sub.path + '/')) 
+                : pathname === group.path || pathname.startsWith(group.path + '/');
+                
+              const isExpanded = !!expandedGroups[group.label];
+              
               return (
-                <Link
-                  key={item.label}
-                  to={item.path}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                    isActive 
-                      ? 'bg-indigo-650 text-white font-extrabold shadow-sm' 
-                      : 'hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  {item.icon}
-                  <span className="capitalize">{item.label}</span>
-                </Link>
+                <div key={group.label} className="space-y-1">
+                  {/* Group Header */}
+                  {group.subItems.length > 0 ? (
+                    <button
+                      onClick={() => toggleGroup(group.label)}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer text-left ${
+                        isGroupActive 
+                          ? 'text-white bg-slate-800/40 font-bold border border-slate-800/40 shadow-xs' 
+                          : 'hover:bg-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {group.icon}
+                        <span className="capitalize">{group.label}</span>
+                      </div>
+                      <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                  ) : (
+                    <Link
+                      to={group.path}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                        isGroupActive 
+                          ? 'bg-indigo-650 text-white font-extrabold shadow-sm' 
+                          : 'hover:bg-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      {group.icon}
+                      <span className="capitalize">{group.label}</span>
+                    </Link>
+                  )}
+                  
+                  {/* Sub items */}
+                  {group.subItems.length > 0 && isExpanded && (
+                    <div className="pl-4 space-y-1 pt-1 border-l border-slate-800/80 ml-5">
+                      {group.subItems.map((sub) => {
+                        const isSubActive = pathname === sub.path || pathname.startsWith(sub.path + '/');
+                        return (
+                          <Link
+                            key={sub.label}
+                            to={sub.path}
+                            className={`w-full flex items-center px-3 py-2 rounded-lg transition-all capitalize text-[10px] ${
+                              isSubActive 
+                                ? 'text-indigo-400 font-extrabold bg-slate-800/20' 
+                                : 'text-slate-450 hover:bg-slate-800/45 hover:text-slate-200'
+                            }`}
+                          >
+                            <span>{sub.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
@@ -276,18 +384,72 @@ export const AdminLayout: React.FC = () => {
               <button onClick={() => setSidebarOpen(false)} className="p-1 border border-slate-700 text-slate-400 rounded"><X className="h-4 w-4" /></button>
             </div>
             
-            <nav className="flex-1 space-y-1 overflow-y-auto font-semibold text-[11px] uppercase tracking-wider text-slate-400">
-              {navItems.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.path}
-                  onClick={() => setSidebarOpen(false)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 hover:text-slate-200 transition-colors"
-                >
-                  {item.icon}
-                  <span className="capitalize">{item.label}</span>
-                </Link>
-              ))}
+            <nav className="flex-1 space-y-2 overflow-y-auto font-semibold text-[11px] uppercase tracking-wider text-slate-400">
+              {menuGroups.map((group) => {
+                const isGroupActive = group.subItems.length > 0 
+                  ? group.subItems.some(sub => pathname === sub.path || pathname.startsWith(sub.path + '/')) 
+                  : pathname === group.path || pathname.startsWith(group.path + '/');
+                  
+                const isExpanded = !!expandedGroups[group.label];
+                
+                return (
+                  <div key={group.label} className="space-y-1">
+                    {/* Group Header */}
+                    {group.subItems.length > 0 ? (
+                      <button
+                        onClick={() => toggleGroup(group.label)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-all cursor-pointer text-left ${
+                          isGroupActive 
+                            ? 'text-white bg-slate-800/40 font-bold border border-slate-800/40 shadow-xs' 
+                            : 'hover:bg-slate-800 hover:text-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {group.icon}
+                          <span className="capitalize">{group.label}</span>
+                        </div>
+                        <ChevronDown className={`h-3 w-3 text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                    ) : (
+                      <Link
+                        to={group.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${
+                          isGroupActive 
+                            ? 'bg-indigo-650 text-white font-extrabold shadow-sm' 
+                            : 'hover:bg-slate-800 hover:text-slate-200'
+                        }`}
+                      >
+                        {group.icon}
+                        <span className="capitalize">{group.label}</span>
+                      </Link>
+                    )}
+                    
+                    {/* Sub items */}
+                    {group.subItems.length > 0 && isExpanded && (
+                      <div className="pl-4 space-y-1 pt-1 border-l border-slate-800/80 ml-5">
+                        {group.subItems.map((sub) => {
+                          const isSubActive = pathname === sub.path || pathname.startsWith(sub.path + '/');
+                          return (
+                            <Link
+                              key={sub.label}
+                              to={sub.path}
+                              onClick={() => setSidebarOpen(false)}
+                              className={`w-full flex items-center px-3 py-1.5 rounded-lg transition-all capitalize text-[10px] ${
+                                isSubActive 
+                                  ? 'text-indigo-400 font-extrabold bg-slate-800/20' 
+                                  : 'text-slate-450 hover:bg-slate-800/45 hover:text-slate-200'
+                              }`}
+                            >
+                              <span>{sub.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
 
             <button onClick={handleLogout} className="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5">

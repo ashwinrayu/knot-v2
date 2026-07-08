@@ -31,6 +31,7 @@ export interface Institution {
   };
   onboarded: boolean;
   aiConfig: AIConfig;
+  syncTiming?: string;
 }
 
 export interface ExtractedCourse {

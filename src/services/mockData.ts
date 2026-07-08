@@ -135,6 +135,7 @@ export const DEFAULT_INSTITUTION: Institution = {
     phone: '(617) 555-0199'
   },
   onboarded: true,
+  syncTiming: 'Weekly',
   aiConfig: {
     minGrade: 'C',
     creditDifference: 1.5,

@@ -274,8 +274,19 @@ export const LeadPipeline: React.FC = () => {
                       </td>
                       <td className="p-4 text-right">
                         <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickFollowUpEmail(lead);
+                          }}
+                          className="px-3 py-1.5 border border-indigo-200 hover:bg-indigo-50 text-indigo-650 hover:border-indigo-300 rounded-lg text-[10px] shadow-sm font-bold bg-white mr-2 inline-flex items-center gap-1 cursor-pointer"
+                        >
+                          <Mail className="h-3 w-3" />
+                          <span>Send Email</span>
+                        </button>
+                        <button
                           onClick={() => setSelectedLeadId(lead.id)}
-                          className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-[10px] text-slate-700 shadow-sm font-bold bg-white"
+                          className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 rounded-lg text-[10px] text-slate-700 shadow-sm font-bold bg-white inline-flex items-center"
                         >
                           Logs Detail
                         </button>
@@ -314,9 +325,22 @@ export const LeadPipeline: React.FC = () => {
                   <div className="flex items-center gap-2"><Building className="h-3.5 w-3.5 text-slate-400" /> <span>{lead.sendingInstitution}</span></div>
                   <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-slate-400" /> <span>Evaluated: {lead.evaluationDate}</span></div>
                 </div>
-                <div className="border-t border-slate-50 pt-3 flex justify-between items-center text-xs font-bold">
-                  <span className="text-[10px] text-slate-400">Match score: <strong className="text-slate-700">{lead.leadScore}%</strong></span>
-                  <span className="text-indigo-600 flex items-center gap-0.5 text-[10px]">Open Profile <ChevronRight className="h-3 w-3" /></span>
+                <div className="border-t border-slate-50 pt-3 flex justify-between items-center text-[10px] font-bold">
+                  <span className="text-slate-400 font-semibold">Match score: <strong className="text-slate-700">{lead.leadScore}%</strong></span>
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickFollowUpEmail(lead)}
+                      className="p-1.5 border border-indigo-150 rounded-lg bg-indigo-50/50 hover:bg-indigo-50 text-indigo-600 transition-colors cursor-pointer animate-fade-in"
+                      title="Send Follow-up Email"
+                    >
+                      <Mail className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="text-indigo-650 flex items-center gap-0.5 cursor-pointer" onClick={() => setSelectedLeadId(lead.id)}>
+                      Open Profile
+                      <ChevronRight className="h-3 w-3" />
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
