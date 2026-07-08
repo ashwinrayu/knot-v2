@@ -368,7 +368,7 @@ export const EvaluationWorkspace: React.FC = () => {
                 activeTab === 'comments' ? 'border-indigo-600 text-indigo-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
-              Admissions Chat
+              AI Recommended Courses
             </button>
             <button
               onClick={() => setActiveTab('history')}
@@ -422,32 +422,83 @@ export const EvaluationWorkspace: React.FC = () => {
             )}
 
             {activeTab === 'comments' && (
-              <div className="flex flex-col h-full justify-between gap-4">
-                <div className="space-y-3.5 max-h-56 overflow-y-auto pr-1">
-                  {evaluation.comments.map(comm => (
-                    <div key={comm.id} className="p-3 bg-slate-50/50 border border-slate-100 rounded-xl text-xs space-y-1">
-                      <div className="flex justify-between items-center font-semibold text-slate-800">
-                        <span>{comm.author}</span>
-                        <span className="text-[9px] text-slate-400">{new Date(comm.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
-                      <p className="text-slate-550 leading-relaxed font-medium">{comm.text}</p>
-                    </div>
-                  ))}
+              <div className="space-y-4">
+                <div className="space-y-1 select-none">
+                  <span className="text-[9px] font-bold text-indigo-650 uppercase tracking-widest bg-indigo-50 border border-indigo-150 px-2 py-0.5 rounded">
+                    AI Enrollment Recommendations
+                  </span>
+                  <p className="text-[10px] text-slate-405 font-semibold leading-normal mt-2">
+                    Based on evaluated transcript records and the target program (**{evaluation.studentProgram}**), the advisor recommends scheduling these core course units:
+                  </p>
                 </div>
+                
+                <div className="space-y-2.5">
+                  {evaluation.studentProgram === 'B.S. in Computer Science' ? (
+                    <>
+                      <div className="p-3 border border-emerald-150 bg-emerald-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">CS 101 — Intro to CS (Satisfied)</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            Direct transfer granted based on CS-101 match (96%). 4.0 Units applied.
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 border border-amber-150 bg-amber-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <AlertCircle className="h-4.5 w-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">CS 102 — Data Structures (Pending Audit)</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            CS-202 has 88% correlation score. Review syllabus variables & recursion patterns.
+                          </span>
+                        </div>
+                      </div>
 
-                <form onSubmit={handleSendComment} className="flex gap-2">
-                  <input
-                    type="text"
-                    required
-                    value={commentInput}
-                    onChange={(e) => setCommentInput(e.target.value)}
-                    placeholder="Type comments log..."
-                    className="flex-grow px-3 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50/50 focus:outline-none focus:bg-white"
-                  />
-                  <button type="submit" className="p-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-sm">
-                    <Send className="h-3.5 w-3.5" />
-                  </button>
-                </form>
+                      <div className="p-3 border border-indigo-150 bg-indigo-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <Sparkles className="h-4.5 w-4.5 text-indigo-500 flex-shrink-0 mt-0.5 animate-pulse" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">Enroll in CS 201 (Algorithms) Next Semester</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            AI suggests taking CS 201 next semester to align with program progression flow.
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-3 border border-rose-150 bg-rose-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <AlertCircle className="h-4.5 w-4.5 text-rose-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">Retake ENG 101 at Knot</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            ENG-110 grade (D) fell below the passing threshold of C. Retake ENG 101.
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="p-3 border border-emerald-150 bg-emerald-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">Core Requirements Met</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            Major prerequisites mapped at high confidence.
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-3 border border-indigo-150 bg-indigo-50/10 rounded-xl flex gap-3 items-start text-xs font-semibold">
+                        <Sparkles className="h-4.5 w-4.5 text-indigo-500 flex-shrink-0 mt-0.5 animate-pulse" />
+                        <div>
+                          <span className="font-bold text-slate-800 block">Enroll in Program Core</span>
+                          <span className="text-[10px] text-slate-450 block mt-0.5 leading-normal">
+                            Recommended to enroll in introductory core courses for {evaluation.studentProgram}.
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
 

@@ -362,11 +362,15 @@ export const StudentUpload: React.FC = () => {
               <span className="text-emerald-650 font-bold">{completedResult.confidenceScore ?? 87}%</span>
             </div>
             <div className="flex justify-between p-3.5 bg-slate-50">
-              <span className="text-slate-500">Status</span>
-              <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border font-bold uppercase text-[9px]">Pending Review</span>
+              <span className="text-slate-500">Degree Credit Application</span>
+              <span className="text-emerald-700 font-bold uppercase text-[9px]">
+                {completedResult.courses
+                  ?.filter((c: any) => c.status === 'approved')
+                  .reduce((sum: number, c: any) => sum + (c.receivingCredits || 0), 0) ?? 0} Credits Accepted
+              </span>
             </div>
           </div>
-
+ 
           {/* Mapped Courses Detail List */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-slate-800">Transcript Course Alignments</h3>
@@ -377,7 +381,7 @@ export const StudentUpload: React.FC = () => {
                     <th className="p-3">Sending Course</th>
                     <th className="p-3">Knot Equivalent</th>
                     <th className="p-3 text-center">Credits</th>
-                    <th className="p-3 text-right">Status</th>
+                    <th className="p-3 text-right">Credit Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-semibold text-slate-650">
@@ -401,12 +405,14 @@ export const StudentUpload: React.FC = () => {
                         {c.status === 'approved' ? `${c.receivingCredits} / ${c.credits}` : `0 / ${c.credits}`}
                       </td>
                       <td className="p-3 text-right">
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
-                          c.status === 'approved' ? 'bg-emerald-50 text-emerald-700' :
-                          c.status === 'rejected' ? 'bg-rose-50 text-rose-700' :
-                          'bg-amber-50 text-amber-700'
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase border ${
+                          c.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                          c.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-100' :
+                          'bg-amber-50 text-amber-700 border-amber-100'
                         }`}>
-                          {c.status}
+                          {c.status === 'approved' ? `${c.receivingCredits}.0 Units Granted` :
+                           c.status === 'rejected' ? 'Not Transferable' :
+                           'Audit Required'}
                         </span>
                       </td>
                     </tr>
@@ -438,22 +444,22 @@ export const StudentUpload: React.FC = () => {
                 let statusText = '';
                 
                 if (!isSelected) {
-                  statusText = 'Not Selected';
-                  statusColor = 'bg-slate-50 text-slate-450 border-slate-200';
+                  statusText = 'Not Evaluated';
+                  statusColor = 'bg-slate-55 text-slate-450 border-slate-200';
                   recommendationTitle = `Include ${course.code} for evaluation`;
                   recommendationDesc = `You have not selected ${course.code} to satisfy. If you have taken an equivalent, re-run with it checked to earn ${course.credits} units.`;
                 } else if (matchedExtracted && matchedExtracted.status === 'approved') {
-                  statusText = 'Satisfied';
+                  statusText = `${course.credits}.0 Units Transferred`;
                   statusColor = 'bg-emerald-50 text-emerald-700 border-emerald-150';
                   recommendationTitle = `Perfect Match for ${course.code}`;
                   recommendationDesc = `Your course ${matchedExtracted.code} (${matchedExtracted.title}) is a 96% match. Credits are fully transferable!`;
                 } else if (matchedExtracted && matchedExtracted.status === 'pending') {
-                  statusText = 'Pending Audit';
+                  statusText = 'Audit Pending';
                   statusColor = 'bg-amber-50 text-amber-750 border-amber-150';
                   recommendationTitle = `Manual review for ${course.code}`;
                   recommendationDesc = `Your course ${matchedExtracted.code} has 88% similarity but requires admissions audit. An advisor will contact you.`;
                 } else {
-                  statusText = 'Missing / Rejected';
+                  statusText = 'No Equivalent';
                   statusColor = 'bg-rose-50 text-rose-700 border-rose-150';
                   recommendationTitle = `Complete substitute at Knot for ${course.code}`;
                   recommendationDesc = `No valid passing equivalent found. We recommend enrolling in ${course.code} (${course.title}) next semester.`;

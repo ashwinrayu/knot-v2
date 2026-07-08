@@ -69,8 +69,7 @@ export const AdminLayout: React.FC = () => {
       path: '/admin/evaluations',
       subItems: [
         { label: 'Processed Queue', path: '/admin/evaluations' },
-        { label: 'Review Center', path: '/admin/review' },
-        { label: 'Student Reports', path: '/admin/reports' }
+        { label: 'Review Center', path: '/admin/review' }
       ]
     },
     {
