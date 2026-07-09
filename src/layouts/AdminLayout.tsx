@@ -167,8 +167,8 @@ export const AdminLayout: React.FC = () => {
            ========================================== */}
         <aside className="w-64 bg-slate-900 text-slate-350 flex flex-col border-r border-slate-800 hidden lg:flex flex-shrink-0 z-30 print:hidden">
           {/* Logo & College branding */}
-          <div className="p-5 border-b border-slate-800 flex items-center">
-            <KnotLogo height={52} invert={true} />
+          <div className="p-6 border-b border-slate-800 flex items-center justify-center">
+            <KnotLogo height={80} invert={true} />
           </div>
 
           {/* Sidebar Menu Links */}
