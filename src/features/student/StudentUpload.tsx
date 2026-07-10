@@ -405,15 +405,11 @@ export const StudentUpload: React.FC = () => {
                         {c.status === 'approved' ? `${c.receivingCredits} / ${c.credits}` : `0 / ${c.credits}`}
                       </td>
                       <td className="p-3 text-right">
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase border ${
-                          c.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                          c.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-100' :
-                          'bg-amber-50 text-amber-700 border-amber-100'
-                        }`}>
-                          {c.status === 'approved' ? `${c.receivingCredits}.0 Units Granted` :
-                           c.status === 'rejected' ? 'Not Transferable' :
-                           'Audit Required'}
-                        </span>
+                        {c.status === 'approved' && (
+                          <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase border bg-emerald-50 text-emerald-700 border-emerald-100">
+                            {c.receivingCredits}.0 Units Granted
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -442,25 +438,21 @@ export const StudentUpload: React.FC = () => {
                 let recommendationDesc = '';
                 let statusColor = '';
                 let statusText = '';
+                let showStatus = false;
                 
                 if (!isSelected) {
-                  statusText = 'Not Evaluated';
-                  statusColor = 'bg-slate-55 text-slate-450 border-slate-200';
                   recommendationTitle = `Include ${course.code} for evaluation`;
                   recommendationDesc = `You have not selected ${course.code} to satisfy. If you have taken an equivalent, re-run with it checked to earn ${course.credits} units.`;
                 } else if (matchedExtracted && matchedExtracted.status === 'approved') {
                   statusText = `${course.credits}.0 Units Transferred`;
                   statusColor = 'bg-emerald-50 text-emerald-700 border-emerald-150';
+                  showStatus = true;
                   recommendationTitle = `Perfect Match for ${course.code}`;
                   recommendationDesc = `Your course ${matchedExtracted.code} (${matchedExtracted.title}) is a 96% match. Credits are fully transferable!`;
                 } else if (matchedExtracted && matchedExtracted.status === 'pending') {
-                  statusText = 'Audit Pending';
-                  statusColor = 'bg-amber-50 text-amber-750 border-amber-150';
                   recommendationTitle = `Manual review for ${course.code}`;
                   recommendationDesc = `Your course ${matchedExtracted.code} has 88% similarity but requires admissions audit. An advisor will contact you.`;
                 } else {
-                  statusText = 'No Equivalent';
-                  statusColor = 'bg-rose-50 text-rose-700 border-rose-150';
                   recommendationTitle = `Complete substitute at Knot for ${course.code}`;
                   recommendationDesc = `No valid passing equivalent found. We recommend enrolling in ${course.code} (${course.title}) next semester.`;
                 }
@@ -473,9 +465,11 @@ export const StudentUpload: React.FC = () => {
                       </span>
                       <p className="text-[10px] text-slate-500 font-semibold leading-normal">{recommendationDesc}</p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wider ${statusColor}`}>
-                      {statusText}
-                    </span>
+                    {showStatus && (
+                      <span className={`px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wider ${statusColor}`}>
+                        {statusText}
+                      </span>
+                    )}
                   </div>
                 );
               })}
