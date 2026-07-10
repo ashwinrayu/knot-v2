@@ -154,13 +154,19 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Actions
   const triggerSystemNotification = (text: string, type: 'success' | 'warning' | 'info') => {
+    const notifId = `notif_${Date.now()}`;
     const newNotif = {
-      id: `notif_${Date.now()}`,
+      id: notifId,
       text,
       type,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     setNotifications(prev => [newNotif, ...prev].slice(0, 10)); // Keep last 10 notifications
+
+    // Auto-dismiss notification after 4 seconds
+    setTimeout(() => {
+      clearNotification(notifId);
+    }, 4000);
   };
 
   const clearNotification = (id: string) => {
