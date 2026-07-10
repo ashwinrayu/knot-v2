@@ -9,11 +9,12 @@ import {
   Check, X, ShieldAlert, Sparkles, FileText, ChevronRight, Eye, 
   Sliders, Settings, Info, BarChart2, CheckCircle2, Globe, Edit3
 } from 'lucide-react';
+import { CourseCatalog } from '../catalog/CourseCatalog';
 
 export const KnowledgeBase: React.FC = () => {
   const { receivingCourses, evaluations, triggerSystemNotification, updateCatalogCourse, institution } = useAppState();
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'graph' | 'injection' | 'registry' | 'versions' | 'validation'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'injection' | 'catalog' | 'registry' | 'versions'>('dashboard');
 
   // Document Library items for Data Injection history
   const [docsList, setDocsList] = useState([
@@ -120,6 +121,7 @@ export const KnowledgeBase: React.FC = () => {
         
         setWebLinkUrl('');
         setUploadFile(null);
+        setActiveTab('catalog');
       }
     }, 1500);
   };
@@ -181,7 +183,7 @@ export const KnowledgeBase: React.FC = () => {
 
         {/* Tab Controls */}
         <div className="flex bg-slate-100 p-1 border rounded-xl select-none font-bold text-[9px] uppercase tracking-wider text-slate-500">
-          {(['dashboard', 'graph', 'injection', 'registry', 'versions', 'validation'] as const).map(t => (
+          {(['dashboard', 'injection', 'catalog', 'registry', 'versions'] as const).map(t => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
@@ -189,7 +191,10 @@ export const KnowledgeBase: React.FC = () => {
                 activeTab === t ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
               }`}
             >
-              {t === 'injection' ? 'Data Injection' : t === 'registry' ? 'Registry Explorer' : t.replace('_', ' ')}
+              {t === 'injection' ? 'Data Injection' : 
+               t === 'catalog' ? 'Course Catalog' : 
+               t === 'registry' ? 'Registry Explorer' : 
+               t.replace('_', ' ')}
             </button>
           ))}
         </div>
@@ -275,72 +280,7 @@ export const KnowledgeBase: React.FC = () => {
           </motion.div>
         )}
 
-        {/* ==========================================
-            2. INTERACTIVE KNOWLEDGE GRAPH
-           ========================================== */}
-        {activeTab === 'graph' && (
-          <motion.div key="graph" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-            <Card className="p-6 space-y-4 bg-slate-900 text-white min-h-[50vh] flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute inset-0 opacity-5 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-500 via-indigo-900 to-slate-950" />
-              
-              {/* Controls bar */}
-              <div className="relative z-10 flex justify-between items-center border-b border-slate-800 pb-3 select-none">
-                <div>
-                  <h3 className="text-xs font-bold text-white flex items-center gap-1.5"><Sparkles className="h-4.5 w-4.5 text-indigo-400 animate-pulse" /> Neural Catalog Vector Mapping Graph</h3>
-                  <p className="text-[9px] text-slate-500 font-semibold block mt-0.5">Interactive course overlap clusters</p>
-                </div>
-                
-                {/* Mock Zoom sliders */}
-                <div className="flex items-center gap-3 text-[9px] text-slate-400 uppercase tracking-widest font-bold">
-                  <span>Zoom: 80%</span>
-                  <input type="range" min="1" max="100" defaultValue="80" className="w-20 accent-indigo-500 cursor-ew-resize" />
-                </div>
-              </div>
 
-              {/* Renders visually stunning CSS hierarchy charts nodes */}
-              <div className="relative z-10 flex-grow py-12 flex justify-center items-center">
-                <div className="flex flex-col md:flex-row items-center gap-12 text-center text-[10px] font-bold select-none font-mono">
-                  
-                  {/* Node 1 */}
-                  <div className="p-3 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
-                    <span className="text-slate-400 block font-bold">DEPARTMENT</span>
-                    <span className="text-white text-xs font-black">Computer Science</span>
-                  </div>
-
-                  <div className="text-slate-655">⟶</div>
-
-                  {/* Node 2 */}
-                  <div className="p-3 bg-indigo-900/50 border border-indigo-500/50 rounded-xl space-y-1">
-                    <span className="text-indigo-300 block font-bold">COURSE</span>
-                    <span className="text-white text-xs font-black">CS 101 Java Programming</span>
-                  </div>
-
-                  <div className="text-slate-655">⟶</div>
-
-                  {/* Node 3 */}
-                  <div className="p-3 bg-slate-800 border border-slate-700 rounded-xl space-y-1">
-                    <span className="text-slate-400 block font-bold">LEARNING OUTCOME</span>
-                    <span className="text-white text-xs font-black">Class syntax & inheritance</span>
-                  </div>
-
-                  <div className="text-slate-655">⟶</div>
-
-                  {/* Node 4 */}
-                  <div className="p-3 bg-slate-850 border border-slate-750 rounded-xl space-y-1">
-                    <span className="text-indigo-400 block font-bold">EQUIVALENT CODES</span>
-                    <span className="text-white text-xs font-black">CS-10A (De Anza College)</span>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* Diagram Footer logs */}
-              <div className="relative z-10 border-t border-slate-800 pt-3 text-[9px] text-slate-500 font-bold uppercase text-center select-none">
-                Interactive highlight active nodes. Pan diagram workspace by mouse drag simulations.
-              </div>
-            </Card>
-          </motion.div>
-        )}
 
         {/* ==========================================
             3. DATA INJECTION (Scraper & Document Sync)
@@ -535,6 +475,15 @@ export const KnowledgeBase: React.FC = () => {
               </div>
 
             </div>
+          </motion.div>
+        )}
+
+        {/* ==========================================
+            4. COURSE CATALOG (EMBEDDED)
+           ========================================== */}
+        {activeTab === 'catalog' && (
+          <motion.div key="catalog" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+            <CourseCatalog isEmbedded={true} />
           </motion.div>
         )}
 
@@ -742,52 +691,7 @@ export const KnowledgeBase: React.FC = () => {
           </motion.div>
         )}
 
-        {/* ==========================================
-            6. VALIDATION CENTER (DIAGNOSTICS)
-           ========================================== */}
-        {activeTab === 'validation' && (
-          <motion.div key="valid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-            <Card className="p-6 space-y-4">
-              <h3 className="text-sm font-bold text-slate-950 border-b pb-2 select-none">AI Diagnostics validation checks</h3>
-              
-              {!isRunningValidation ? (
-                <div className="space-y-4 text-xs font-semibold text-slate-500">
-                  <p>Run full verification audits across curriculum maps and catalog descriptions directories.</p>
-                  <Button type="button" onClick={handleRunValidation} className="py-2.5">Run Diagnostics Check</Button>
-                </div>
-              ) : (
-                <div className="p-6 text-center space-y-3 flex flex-col items-center select-none">
-                  <RefreshCw className="h-8 w-8 text-indigo-650 animate-spin" />
-                  <span className="font-bold text-slate-855 block">Auditing duplicate database nodes...</span>
-                </div>
-              )}
 
-              {validationDone && (
-                <div className="space-y-3 pt-4 border-t text-xs font-semibold">
-                  <div className="flex items-center gap-2 text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                    <span>0 critical duplicates or missing credit structures found. Catalog is healthy.</span>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="p-2.5 bg-slate-50 border rounded-xl">
-                      <span className="font-bold text-slate-800 block">0</span>
-                      <span className="text-[9px] text-slate-400 uppercase tracking-wider block">Duplicate Mappings</span>
-                    </div>
-                    <div className="p-2.5 bg-slate-50 border rounded-xl">
-                      <span className="font-bold text-slate-800 block">0</span>
-                      <span className="text-[9px] text-slate-400 uppercase tracking-wider block">Missing Descriptions</span>
-                    </div>
-                    <div className="p-2.5 bg-slate-50 border rounded-xl">
-                      <span className="font-bold text-slate-800 block">0</span>
-                      <span className="text-[9px] text-slate-400 uppercase tracking-wider block">Broken prerequisites</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </Card>
-          </motion.div>
-        )}
 
       </AnimatePresence>
 

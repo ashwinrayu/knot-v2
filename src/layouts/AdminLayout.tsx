@@ -76,11 +76,7 @@ export const AdminLayout: React.FC = () => {
       label: 'Knowledge Base',
       icon: <Database className="h-4 w-4" />,
       path: '/admin/knowledge-base',
-      subItems: [
-        { label: 'AI Mapping Registry', path: '/admin/knowledge-base' },
-        { label: 'Course Catalog', path: '/admin/catalog' },
-        { label: 'Website Scraper', path: '/admin/scraper' }
-      ]
+      subItems: []
     },
     {
       label: 'Student Leads',

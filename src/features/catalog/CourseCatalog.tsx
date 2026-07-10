@@ -9,7 +9,11 @@ import {
   Trash2, Edit2, RotateCcw, AlertCircle, Bookmark, Compass
 } from 'lucide-react';
 
-export const CourseCatalog: React.FC = () => {
+interface CourseCatalogProps {
+  isEmbedded?: boolean;
+}
+
+export const CourseCatalog: React.FC<CourseCatalogProps> = ({ isEmbedded = false }) => {
   const { receivingCourses, evaluations, triggerSystemNotification, addCatalogCourse } = useAppState();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,18 +83,20 @@ export const CourseCatalog: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-12 font-sans text-xs">
+    <div className={isEmbedded ? "space-y-6 text-xs" : "space-y-6 pb-12 font-sans text-xs"}>
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-5 select-none">
-        <div>
-          <span className="text-[10px] text-indigo-650 font-bold uppercase tracking-widest bg-indigo-50 px-2.5 py-1 rounded-full border">
-            Curriculum Explorer Workspace
-          </span>
-          <h1 className="text-3xl font-display font-black text-slate-900 tracking-tight mt-3">Course Catalog</h1>
-          <p className="text-xs text-slate-400 mt-1">Audit institutional course requirements, credits, and AI suggestions.</p>
+      {!isEmbedded && (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-5 select-none">
+          <div>
+            <span className="text-[10px] text-indigo-650 font-bold uppercase tracking-widest bg-indigo-50 px-2.5 py-1 rounded-full border">
+              Curriculum Explorer Workspace
+            </span>
+            <h1 className="text-3xl font-display font-black text-slate-900 tracking-tight mt-3">Course Catalog</h1>
+            <p className="text-xs text-slate-400 mt-1">Audit institutional course requirements, credits, and AI suggestions.</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Grid: LEFT filters tree, CENTER list, RIGHT details sheet */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
